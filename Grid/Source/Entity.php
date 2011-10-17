@@ -302,4 +302,9 @@ class Entity extends Source
         
         $this->manager->flush();
     }
+
+    public function getHash()
+    {
+        return $this->entityName;
+    }
 }

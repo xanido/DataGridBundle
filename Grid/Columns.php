@@ -117,4 +117,18 @@ class Columns implements \IteratorAggregate, \Countable
     {
         return $this->extensions[$type];
     }
+
+    /**
+     * Internal function
+     * @return string
+     */
+    public function getHash()
+    {
+        $hash = '';
+        foreach ($this->columns as $column)
+        {
+            $hash .= $column->getId();
+        }
+        return $hash;
+    }
 }

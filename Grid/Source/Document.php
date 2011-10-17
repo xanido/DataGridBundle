@@ -273,4 +273,9 @@ class Document extends Source
         
         $this->manager->flush();
     }
+
+    public function getHash()
+    {
+        return $this->documentName;
+    }
 }

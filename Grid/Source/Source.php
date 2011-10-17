@@ -115,4 +115,10 @@ abstract class Source implements DriverInterface
     {
         return array();
     }
+
+    /**
+     * Return source hash string
+     * @abstract
+     */
+    abstract function getHash();
 }

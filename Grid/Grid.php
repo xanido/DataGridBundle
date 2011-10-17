@@ -26,8 +26,6 @@ class Grid
 {
     const UNLIMITED = 0;
 
-    static $last_id;
-
     /**
      * @var \Symfony\Component\HttpFoundation\Session;
      */
@@ -63,7 +61,7 @@ class Grid
     private $columns;
 
     /**
-    * @var \Sorien\DataGridBundle\Grid\DataSorien\DataGridBundle\Grid\Rows
+    * @var \Sorien\DataGridBundle\Grid\Rows
     */
     private $rows;
 
@@ -74,9 +72,8 @@ class Grid
     private $showTitles;
 
     /**
-     * @param \Source\Source $source Data Source
      * @param \Symfony\Component\DependencyInjection\Container $container
-     * @param string $id set if you are using more then one grid inside controller
+     * @param \Sorien\DataGridBundle\Grid\Source\Source $source Data Source
      */
     public function __construct($container, $source = null)
     {
@@ -90,8 +87,6 @@ class Grid
         $this->router = $container->get('router');
         $this->request = $container->get('request');
         $this->session = $this->request->getSession();
-
-        $this->createId();
 
         $this->setLimits(array(20 => '20', 50 => '50', 100 => '100'));
         $this->page = 0;
@@ -150,6 +145,9 @@ class Grid
 
         //get cols from source
         $this->source->getColumns($this->columns);
+
+        //generate hash
+        $this->hash = 'grid_'.md5($this->request->get('_controller').$this->columns->getHash().$this->source->getHash());
 
         //store column data
         $this->fetchAndSaveColumnData();
@@ -543,35 +541,16 @@ class Grid
         $this->columns->addExtension($extension);
     }
 
-    /**
-     * Sets unique filter identification
-     *
-     * @param $id
-     * @return Grid
-     */
-    private function createId()
+    public function setId($id)
     {
-//        $this->id = $id;
-//        $this->hash = .$id);
-
-        if (self::$last_id === null)
-        {
-            self::$last_id = 1;
-        }
-        else
-        {
-            self::$last_id++;
-        }
-
-        $this->hash = 'grid_'.md5($this->request->get('_controller').self::$last_id);
-
+        $this->id = $id;
         return $this;
     }
 
-//    public function getId()
-//    {
-//        return $this->id;
-//    }
+    public function getId()
+    {
+        return $this->id;
+    }
     
     public function deleteAction($ids)
     {

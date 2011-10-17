@@ -11,9 +11,6 @@
 
 namespace Sorien\DataGridBundle\Twig;
 
-/**
- * @todo use {% grid_theme grid '' %} instead of second argument in grid function
- */
 class DataGridExtension extends \Twig_Extension
 {
     const DEFAULT_TEMPLATE = 'SorienDataGridBundle::blocks.html.twig';
@@ -41,7 +38,7 @@ class DataGridExtension extends \Twig_Extension
     /**
      * @var map grid to grid name in twig
      */
-    static $names;
+    protected $names;
 
     /**
      * @param \Symfony\Component\Routing\Router $router
@@ -92,7 +89,7 @@ class DataGridExtension extends \Twig_Extension
     {
         $this->theme = $theme;
 
-        self::$names[$grid->getHash()] = $id;
+        $this->names[$grid->getHash()] = $id;
 
         return $this->renderBlock('grid', array('grid' => $grid));
     }
@@ -135,7 +132,7 @@ class DataGridExtension extends \Twig_Extension
     {
         $value = $column->renderCell($row->getField($column->getId()), $row, $this->router);
 
-        if (($id = self::$names[$grid->getHash()]) != '')
+        if (($id = $this->names[$grid->getHash()]) != '')
         {
             if ($this->hasBlock($block = 'grid_'.$id.'_column_'.$column->getId().'_cell'))
             {
