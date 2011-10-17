@@ -22,19 +22,34 @@ class DataGridExtension extends \Twig_Extension
      * @var \Twig_Environment
      */
     protected $environment;
+
     /**
      * @var \Twig_Template
      */
     protected $templates;
+
+    /**
+     * @var string
+     */
     protected $theme;
+
     /**
     * @var \Symfony\Component\Routing\Router
     */
     protected $router;
 
+    /**
+     * @var map grid to grid name in twig
+     */
+    static $names;
+
+    /**
+     * @param \Symfony\Component\Routing\Router $router
+     */
     public function __construct($router)
     {
         $this->router = $router;
+        $this->templates = array();
     }
 
     /**
@@ -66,20 +81,18 @@ class DataGridExtension extends \Twig_Extension
     }
 
     /**
-     * Render grid block.
+     * Render grid function
      *
-     * @param $grid
-     * @param $theme
+     * @param \Sorien\DataGridBundle\Grid\Grid $grid
+     * @param string $theme
+     * @param string $id
      * @return string
      */
     public function getGrid($grid, $theme = null, $id = '')
     {
         $this->theme = $theme;
 
-        if ($id != '')
-        {
-            $grid->setId($id);
-        }
+        self::$names[$grid->getHash()] = $id;
 
         return $this->renderBlock('grid', array('grid' => $grid));
     }
@@ -110,11 +123,11 @@ class DataGridExtension extends \Twig_Extension
     }
 
     /**
-     * Cell Drawing override
+     * Cell Drawing
      *
-     * @param Sorien\DataGridBundle\Grid\Column\Column $column
-     * @param Sorien\DataGridBundle\Grid\Row $row
-     * @param Sorien\DataGridBundle\Grid\Grid $grid
+     * @param \Sorien\DataGridBundle\Grid\Column\Column $column
+     * @param \Sorien\DataGridBundle\Grid\Row $row
+     * @param \Sorien\DataGridBundle\Grid\Grid $grid
      *
      * @return string
      */
@@ -122,7 +135,7 @@ class DataGridExtension extends \Twig_Extension
     {
         $value = $column->renderCell($row->getField($column->getId()), $row, $this->router);
 
-        if (($id = $grid->getId()) != '')
+        if (($id = self::$names[$grid->getHash()]) != '')
         {
             if ($this->hasBlock($block = 'grid_'.$id.'_column_'.$column->getId().'_cell'))
             {
@@ -139,10 +152,11 @@ class DataGridExtension extends \Twig_Extension
     }
 
     /**
-     * Filter Drawing override
+     * Filter Drawing
      *
      * @param \Sorien\DataGridBundle\Grid\Column\Column $column
      * @param \Sorien\DataGridBundle\Grid\Grid $grid
+     * @todo like a cell drawing
      *
      * @return string
      */
@@ -153,6 +167,14 @@ class DataGridExtension extends \Twig_Extension
         return $this->hasBlock($block) ?  $this->renderBlock($block, array('column' => $column, 'hash' => $grid->getHash())) : $column->renderFilter($grid->getHash());
     }
 
+    /**
+     * Internal function for retrieving grid urls
+     *
+     * @param $section
+     * @param \Sorien\DataGridBundle\Grid\Grid $grid
+     * @param null $param
+     * @return string
+     */
     public function getGridUrl($section, $grid, $param = null)
     {
         if ($section == 'order')
@@ -190,12 +212,7 @@ class DataGridExtension extends \Twig_Extension
      */
     private function renderBlock($name, $parameters)
     {
-        if (empty($this->templates))
-        {
-            $this->loadTemplates();
-        }
-
-        foreach ($this->templates as $template)
+        foreach ($this->getTemplates() as $template)
         {
             if ($template->hasBlock($name))
             {
@@ -214,12 +231,7 @@ class DataGridExtension extends \Twig_Extension
      */
     private function hasBlock($name)
     {
-        if (empty($this->templates))
-        {
-            $this->loadTemplates();
-        }
-
-        foreach ($this->templates as $template)
+        foreach ($this->getTemplates() as $template)
         {
             if ($template->hasBlock($name))
             {
@@ -233,33 +245,38 @@ class DataGridExtension extends \Twig_Extension
     /**
      * @throws \Exception
      */
-    private function loadTemplates()
+    private function getTemplates()
     {
-        //get template name
-        if ($this->theme instanceof \Twig_Template)
+        if (empty($this->templates))
         {
-            $this->templates[] = $this->theme;
-            $this->templates[] = $this->environment->loadTemplate($this::DEFAULT_TEMPLATE);
-        }
-        elseif (is_string($this->theme))
-        {
-            $template = $this->environment->loadTemplate($this->theme);
-            while ($template != null)
+            //get template name
+            if ($this->theme instanceof \Twig_Template)
             {
-                $this->templates[] = $template;
-                $template = $template->getParent(array());
+                $this->templates[] = $this->theme;
+                $this->templates[] = $this->environment->loadTemplate($this::DEFAULT_TEMPLATE);
             }
+            elseif (is_string($this->theme))
+            {
+                $template = $this->environment->loadTemplate($this->theme);
+                while ($template != null)
+                {
+                    $this->templates[] = $template;
+                    $template = $template->getParent(array());
+                }
 
-            $this->templates[] = $this->environment->loadTemplate($this->theme);
+                $this->templates[] = $this->environment->loadTemplate($this->theme);
+            }
+            elseif (is_null($this->theme))
+            {
+                $this->templates[] = $this->environment->loadTemplate($this::DEFAULT_TEMPLATE);
+            }
+            else
+            {
+                throw new \Exception('Bad template definition for grid');
+            }
         }
-        elseif (is_null($this->theme))
-        {
-            $this->templates[] = $this->environment->loadTemplate($this::DEFAULT_TEMPLATE);
-        }
-        else
-        {
-            throw new \Exception('Bad template definition for grid');
-        }
+
+        return $this->templates;
     }
 
     public function getName()

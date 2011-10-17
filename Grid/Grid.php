@@ -26,6 +26,8 @@ class Grid
 {
     const UNLIMITED = 0;
 
+    static $last_id;
+
     /**
      * @var \Symfony\Component\HttpFoundation\Session;
      */
@@ -76,7 +78,7 @@ class Grid
      * @param \Symfony\Component\DependencyInjection\Container $container
      * @param string $id set if you are using more then one grid inside controller
      */
-    public function __construct($container, $source = null, $id = '')
+    public function __construct($container, $source = null)
     {
         if(!is_null($source) && !($source instanceof Source))
         {
@@ -89,7 +91,7 @@ class Grid
         $this->request = $container->get('request');
         $this->session = $this->request->getSession();
 
-        $this->setId($id);
+        $this->createId();
 
         $this->setLimits(array(20 => '20', 50 => '50', 100 => '100'));
         $this->page = 0;
@@ -417,7 +419,7 @@ class Grid
     
     public function getHash()
     {
-        return 'grid_'.$this->hash;
+        return $this->hash;
     }
 
     /**
@@ -547,18 +549,29 @@ class Grid
      * @param $id
      * @return Grid
      */
-    public function setId($id)
+    private function createId()
     {
-        $this->id = $id;
-        $this->hash = md5($this->request->get('_controller').$id);
-        
+//        $this->id = $id;
+//        $this->hash = .$id);
+
+        if (self::$last_id === null)
+        {
+            self::$last_id = 1;
+        }
+        else
+        {
+            self::$last_id++;
+        }
+
+        $this->hash = 'grid_'.md5($this->request->get('_controller').self::$last_id);
+
         return $this;
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
+//    public function getId()
+//    {
+//        return $this->id;
+//    }
     
     public function deleteAction($ids)
     {
