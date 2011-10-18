@@ -26,6 +26,8 @@ class Grid
 {
     const UNLIMITED = 0;
 
+    private static $counter;
+
     /**
      * @var \Symfony\Component\HttpFoundation\Session;
      */
@@ -147,7 +149,7 @@ class Grid
         $this->source->getColumns($this->columns);
 
         //generate hash
-        $this->hash = 'grid_'.md5($this->request->get('_controller').$this->columns->getHash().$this->source->getHash());
+        $this->createHash();
 
         //store column data
         $this->fetchAndSaveColumnData();
@@ -414,7 +416,13 @@ class Grid
         $data = $this->request->get($this->getHash());
         return !empty($data);
     }
-    
+
+    public function createHash()
+    {
+        self::$counter = self::$counter === null ? 0 : self::$counter+1;
+        $this->hash = 'grid_'.md5($this->request->get('_controller').$this->columns->getHash().$this->source->getHash().self::$counter);
+    }
+
     public function getHash()
     {
         return $this->hash;
