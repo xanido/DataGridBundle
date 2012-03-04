@@ -39,12 +39,12 @@ class RangeColumn extends Column
 
         if ($this->data['from'] != '')
         {
-           $result[] =  new Filter(self::OPERATOR_GTE, $this->data['from']);
+           $result[] =  new Filter(self::OPERATOR_GTE, (int)$this->data['from']);
         }
 
         if ($this->data['to'] != '')
         {
-           $result[] =  new Filter(self::OPERATOR_LTE, $this->data['to']);
+           $result[] =  new Filter(self::OPERATOR_LTE, (int)$this->data['to']);
         }
 
         return $result;

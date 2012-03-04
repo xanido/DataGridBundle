@@ -98,21 +98,24 @@ class Entity extends Source
         $parent = self::TABLE_ALIAS;
         $elements = explode('.', $name);
 
-        while ($element = array_shift($elements)) {
-            if (count($elements) > 0) {
+        while ($element = array_shift($elements))
+        {
+            if (count($elements) > 0)
+            {
                 $this->joins['_' . $element] = $parent . '.' . $element;
                 $parent = '_' . $element;
                 $name = $element;
-            } else {
+            }
+            else
+            {
                 $name .= '.'.$element;
             }
         }
 
-
-        if ($withAlias) {
+        if ($withAlias)
+        {
             return '_' . $name.' as '.$column->getId();
         }
-
 
         return '_'.$name;
     }
@@ -134,16 +137,26 @@ class Entity extends Source
         return ($operator == COLUMN::OPERATOR_REGEXP ? 'like' : $operator);
     }
 
+    /**
+     * Fix Filter values to prevent SQL Injection
+     *
+     * @param $operator
+     * @param $value
+     * @return string
+     */
     private function normalizeValue($operator, $value)
     {
-        if ($operator == COLUMN::OPERATOR_REGEXP)
+        switch($operator)
         {
-            preg_match('/\/\.\*([^\/]+)\.\*\//s', $value, $matches);
-            return '\'%'.$matches[1].'%\'';
-        }
-        else
-        {
-            return $value;
+            case COLUMN::OPERATOR_REGEXP:
+                preg_match('/\/\.\*([^\/]+)\.\*\//s', $value, $matches);
+                return '\'%'.$matches[1].'%\'';
+
+            case COLUMN::OPERATOR_EQ:
+                return '\''.$value.'\'';
+
+            default:
+                return $value;
         }
     }
 

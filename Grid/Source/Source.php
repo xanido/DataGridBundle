@@ -23,7 +23,8 @@ abstract class Source implements DriverInterface
     private $callbacks;
 
     /**
-     * @param \Doctrine\ODM\MongoDB\Query\Builder $queryBuilder
+     * @todo move to entity source - query builder is specific part of doctrine
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
      */
     public function prepareQuery($queryBuilder)
     {
@@ -35,7 +36,8 @@ abstract class Source implements DriverInterface
 
     /**
      * @param \Sorien\DataGridBundle\Grid\Row $row
-     * @return \Sorien\DataGridBundle\Grid\Row|null
+     *
+     * @return \Sorien\DataGridBundle\Grid\Row
      */
     public function prepareRow($row)
     {
@@ -50,6 +52,8 @@ abstract class Source implements DriverInterface
     /**
      * @param int $type Source::EVENT_PREPARE*
      * @param \Closure $callback
+     *
+     * @return \Sorien\DataGridBundle\Grid\Source\Source
      */
     public function setCallback($type, $callback)
     {
@@ -65,14 +69,16 @@ abstract class Source implements DriverInterface
      * @param \Sorien\DataGridBundle\Grid\Column\Column[] $columns
      * @param int $page
      * @param int $limit
-     * @return \Sorien\DataGridBundle\DataGrid\Rows
+     *
+     * @return \Sorien\DataGridBundle\Grid\Rows
      */
     abstract public function execute($columns, $page = 0, $limit = 0);
 
     /**
      * Get Total count of data items
      *
-     * @param \Sorien\DataGridBundle\Grid\Column\Columns $columns
+     * @param \Sorien\DataGridBundle\Grid\Columns $columns
+     *
      * @return int
      */
     abstract function getTotalCount($columns);
