@@ -58,7 +58,7 @@ class Grid
     /**
      * @var array
      */
-    private $routeParameters;
+    private $routeParameters = array();
 
     /**
      * @var string
@@ -326,6 +326,11 @@ class Grid
         $this->store(self::REQUEST_QUERY_PAGE, $this->getPage(), 0);
     }
 
+    /**
+     * Executes mass actions
+     *
+     * @throws \OutOfBoundsException|\RuntimeException
+     */
     public function executeMassActions()
     {
         $actionId = $this->load(Grid::REQUEST_QUERY_MASS_ACTION, true, false);
@@ -434,6 +439,13 @@ class Grid
         return $this;
     }
 
+    /**
+     * Sets Source to the Grid
+     *
+     * @param $source
+     * @return Grid
+     * @throws \InvalidArgumentException
+     */
     public function setSource($source)
     {
         if (!($source instanceof Source))
@@ -451,6 +463,13 @@ class Grid
         return $this;
     }
 
+    /**
+     * Adds custom column to the grid
+     *
+     * @param $column
+     * @param int $position
+     * @return Grid
+     */
     public function addColumn($column, $position = 0)
     {
         $this->columns->addColumn($column, $position);
@@ -458,6 +477,13 @@ class Grid
         return $this;
     }
 
+    /**
+     * Sets Array of Columns to the grid
+     *
+     * @param $columns
+     * @return Grid
+     * @throws \InvalidArgumentException
+     */
     public function setColumns($columns)
     {
         if(!$columns instanceof Columns)
@@ -466,16 +492,26 @@ class Grid
         }
 
         $this->columns = $columns;
-        $this->processFiltersData();
 
         return $this;
     }
 
+    /**
+     * Returns Grid Columns
+     *
+     * @return Column\Column[]|Columns
+     */
     public function getColumns()
     {
         return $this->columns;
     }
 
+    /**
+     * Adds Mass Action
+     *
+     * @param Action\MassActionInterface $action
+     * @return Grid
+     */
     public function addMassAction(MassActionInterface $action)
     {
         $this->massActions[] = $action;
@@ -483,11 +519,22 @@ class Grid
         return $this;
     }
 
+    /**
+     * Returns Mass Actions
+     *
+     * @return Action\MassAction[]
+     */
     public function getMassActions()
     {
         return $this->massActions;
     }
 
+    /**
+     * Adds Row Action
+     *
+     * @param Action\RowActionInterface $action
+     * @return Grid
+     */
     public function addRowAction(RowActionInterface $action)
     {
         $this->rowActions[$action->getColumn()][] = $action;
@@ -495,21 +542,46 @@ class Grid
         return $this;
     }
 
+    /**
+     * Returns Row Actions
+     *
+     * @return Action\RowAction[]
+     */
     public function getRowActions()
     {
         return $this->rowActions;
     }
 
+    /**
+     * Sets Route Parameters
+     *
+     * @param string $parameter
+     * @param mixed $value
+     *
+     * @return Grid
+     */
     public function setRouteParameter($parameter, $value)
     {
         $this->routeParameters[$parameter] = $value;
+
+        return $this;
     }
 
+    /**
+     * Returns Route Parameters
+     *
+     * @return array
+     */
     public function getRouteParameters()
     {
         return $this->routeParameters;
     }
 
+    /**
+     * Returns Route URL
+     *
+     * @return string
+     */
     public function getRouteUrl()
     {
         if ($this->routeUrl == '')
@@ -521,8 +593,10 @@ class Grid
     }
 
     /**
-     * @param mixed $limits
-     * @return \Sorien\DataGridBundle\Grid\Grid
+     * Sets Limits
+     *
+     * @param mixed $limits e.g. array(10 => '10', 1000 => '1000')
+     * @return Grid
      */
     public function setLimits($limits)
     {
@@ -542,11 +616,21 @@ class Grid
         return $this;
     }
 
+    /**
+     * Returns limits
+     *
+     * @return array
+     */
     public function getLimits()
     {
         return $this->limits;
     }
 
+    /**
+     * Sets Limit
+     *
+     * @param $limit
+     */
     private function setLimit($limit)
     {
         //check if belongs to limits
@@ -560,11 +644,21 @@ class Grid
         }
     }
 
+    /**
+     * Returns selected Limit (Rows Per Page)
+     * @return mixed
+     */
     public function getLimit()
     {
         return $this->limit;
     }
 
+    /**
+     * Sets current Page
+     *
+     * @param $page
+     * @return Grid
+     */
     private function setPage($page)
     {
         if ($page < 0)
@@ -577,35 +671,72 @@ class Grid
         return $this;
     }
 
+    /**
+     * Returns current page
+     *
+     * @return int
+     */
     public function getPage()
     {
         return $this->page;
     }
 
+    /**
+     * Returnd grid display data as rows - internal helper for templates
+     *
+     * @return mixed
+     */
     public function getRows()
     {
         return $this->rows;
     }
 
+    /**
+     * Return count of available pages
+     *
+     * @return float
+     */
     public function getPageCount()
     {
         return ceil($this->getTotalCount() / $this->getLimit());
     }
 
+    /**
+     * Returns count of filtred rows(items) from source
+     *
+     * @return mixed
+     */
     public function getTotalCount()
     {
         return $this->totalCount;
     }
 
     /**
+     * Return true if if title panel is visible in template - internal helper
+     *
      * @return bool
-     * @todo fix according as isFilterSectionVisible
      */
     public function isTitleSectionVisible()
     {
-        return $this->showTitles ;
+        if ($this->showTitles == true)
+        {
+            foreach ($this->columns as $column)
+            {
+                if ($column->getTitle() == '')
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
+    /**
+     * Return true if if filter panel is visible shown in template - internal helper
+     *
+     * @return bool
+     */
     public function isFilterSectionVisible()
     {
         if ($this->showFilters == true)
@@ -623,31 +754,44 @@ class Grid
     }
 
     /**
+     * Return true if if pager panel is visible in template - internal helper
+     *
      * @return bool return true if pager is visible
      */
     public function isPagerSectionVisible()
     {
         $limits = sizeof($this->getLimits());
-        return $limits > 1 || ($limits == 0 && $this->getCurrentLimit() < $this->totalCount);
+
+        return $limits > 1 || ($limits == 0 && $this->getLimit() < $this->getTotalCount());
     }
 
     /**
-     * Function will hide all column filters
+     * Hides Filters Panel
+     *
+     * @return Grid
      */
     public function hideFilters()
     {
         $this->showFilters = false;
+
+        return $this;
     }
 
     /**
-     * function will hide all column titles
+     * Hides Titles panel
+     *
+     * @return Grid
      */
     public function hideTitles()
     {
         $this->showTitles = false;
+
+        return $this;
     }
 
     /**
+     * Adds Column Extension - internal helper
+     *
      * @param Column\Column $extension
      * @return void
      */
@@ -669,11 +813,19 @@ class Grid
         return $this;
     }
 
+    /**
+     * Returns unique filter identifier
+     *
+     * @return string
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @param $ids
+     */
     public function deleteAction($ids)
     {
         $this->source->delete($ids);
@@ -688,7 +840,7 @@ class Grid
     }
 
     /**
-     * Renders a view.
+     * Redirects or Renders a view - helper function
      *
      * @param array    $parameters An array of parameters to pass to the view
      * @param string   $view The view name
@@ -698,7 +850,7 @@ class Grid
      */
     public function gridResponse(array $parameters = array(), $view = null, Response $response = null)
     {
-        if ($this->isReadyForRedirect())
+        if ($this->getState() == self::GRID_STATE_REDIRECT)
         {
             return new RedirectResponse($this->getRouteUrl());
         }
@@ -716,20 +868,19 @@ class Grid
     }
 
     /**
-     * Get Total count of data items
-     *
-     * @return int
+     * @todo change to anotations
+     * @return string
      */
-    private function getTotalCountFromData()
-    {
-        return count($this->data);
-    }
-
     public function getPrefixTitle()
     {
         return $this->prefixTitle;
     }
 
+    /**
+     * @todo change to anotations
+     * @param $prefixTitle
+     * @return Grid
+     */
     public function setPrefixTitle($prefixTitle)
     {
         $this->prefixTitle = $prefixTitle;
