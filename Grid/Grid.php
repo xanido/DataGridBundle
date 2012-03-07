@@ -722,7 +722,7 @@ class Grid
         {
             foreach ($this->columns as $column)
             {
-                if ($column->getTitle() == '')
+                if ($column->getTitle() != '')
                 {
                     return true;
                 }
