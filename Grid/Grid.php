@@ -661,12 +661,7 @@ class Grid
      */
     private function setPage($page)
     {
-        if ($page < 0)
-        {
-            $this->page = 0;
-        }
-
-        $this->page = $page;
+        $this->page = $page < 0 ? 0 : $page;
 
         return $this;
     }
