@@ -23,6 +23,11 @@ class BooleanColumn extends SelectColumn
         parent::__initialize($params);
     }
 
+    public function renderCell($value, $row, $router)
+    {
+        return parent::renderCell((int)$value, $row, $router);
+    }
+
     public function getType()
     {
         return 'boolean';

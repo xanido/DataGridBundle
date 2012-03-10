@@ -111,7 +111,7 @@ abstract class Column
      * Draw cell
      *
      * @param string $value
-     * @param Row $row
+     * @param \Sorien\DataGridBundle\Grid\Row $row
      * @param $router
      * @return string
      */

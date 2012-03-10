@@ -51,6 +51,7 @@ class SelectColumn extends Column
         {
             $value = $this->values[$value];
         }
+
         return parent::renderCell($value, $row, $router);
     }
 
