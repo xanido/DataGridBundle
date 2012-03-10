@@ -22,7 +22,7 @@ class TextColumn extends Column
 
     public function setData($data)
     {
-        if (is_string($data))
+        if (is_string($data) && $data != '')
         {
             $this->data = $data;
         }

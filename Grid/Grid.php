@@ -266,14 +266,14 @@ class Grid
     {
         foreach ($this->columns as $column)
         {
-            $data = $this->load($column->getId());
+            $storedData = $this->load($column->getId(), false, true);
 
-            $column->setData($data);
+            $column->setData($this->load($column->getId()));
 
             $storeData = $column->getData();
 
             //filter has changed reset page
-            if ($data != $storeData)
+            if ($storedData !== $storeData)
             {
                 $this->store(self::REQUEST_QUERY_PAGE, null);
             }

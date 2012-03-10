@@ -52,7 +52,7 @@ class RangeColumn extends Column
 
     public function setData($data)
     {
-        $this->data = array('from' => '', 'to' => '');
+        $this->data = array();
 
         if (is_array($data))
         {

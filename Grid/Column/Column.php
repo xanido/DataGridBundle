@@ -252,7 +252,7 @@ abstract class Column
     }
 
     /**
-     * column ability to filter
+     * Column ability to filter
      *
      * @return bool return true when column can be filtred
      */
@@ -262,7 +262,7 @@ abstract class Column
     }
 
     /**
-     * column ability to sort
+     * Column ability to sort
      *
      * @return bool return true when column can be sorted
      */
@@ -272,7 +272,7 @@ abstract class Column
     }
 
     /**
-     * set column order
+     * Set column order
      *
      * @param string $order asc|desc
      * @return \Sorien\DataGridBundle\Grid\Column\Column
@@ -290,7 +290,7 @@ abstract class Column
     }
 
     /**
-     * get column order
+     * Get column order
      *
      * @return string asc|desc
      */
@@ -300,7 +300,7 @@ abstract class Column
     }
 
     /**
-     * get data filter connection (how column filters are connected with column data)
+     * Get data filter connection (conndition between filters)
      *
      * @return bool column::DATA_CONJUNCTION | column::DATA_DISJUNCTION
      */
@@ -310,7 +310,7 @@ abstract class Column
     }
 
     /**
-     * get column data filters
+     * Get column data filters
      * todo: maybe change to own class not array
      *
      * @return \Sorien\DataGridBundle\Grid\Filter[]
@@ -321,7 +321,7 @@ abstract class Column
     }
 
     /**
-     * set column width
+     * Set column width
      *
      * @param int $size in pixels
      * @return \Sorien\DataGridBundle\Grid\Column\Column
@@ -338,7 +338,7 @@ abstract class Column
     }
 
     /**
-     * get column width
+     * Get column width
      *
      * @return int column width in pixels
      */
@@ -360,7 +360,7 @@ abstract class Column
     }
 
     /**
-     * set filter data from session | request
+     * Set filter data from Storage or Request
      *
      * @param  $data
      * @return \Sorien\DataGridBundle\Grid\Column\Column
@@ -372,7 +372,7 @@ abstract class Column
     }
 
     /**
-     * get filter data from session | request
+     * Get filter data for Storage
      *
      * @return array data
      */
@@ -383,6 +383,7 @@ abstract class Column
 
     /**
      * Set column visibility for source class
+     *
      * @param $value
      * @return \Sorien\DataGridBundle\Grid\Column\Column
      */
@@ -395,6 +396,7 @@ abstract class Column
 
     /**
      * Return true is column in visible for source class
+     *
      * @return boolean
      */
     public function isVisibleForSource()
@@ -409,6 +411,7 @@ abstract class Column
 
     /**
      * Return true is column in primary
+     *
      * @return boolean
      */
     public function isPrimary()
@@ -428,6 +431,7 @@ abstract class Column
 
     /**
      * Set column align
+     *
      * @param string $align left/right/center
      */
     public function setAlign($align)
@@ -440,7 +444,8 @@ abstract class Column
     }
 
     /**
-     * get column align
+     * Get column align
+     *
      * @return bool
      */
     public function getAlign()
