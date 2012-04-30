@@ -62,6 +62,11 @@ abstract class Column
     protected $data;
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * Default Column constructor
      *
      * @param array $params
@@ -75,6 +80,7 @@ abstract class Column
     public function __initialize(array $params)
     {
         $this->params = $params;
+        $this->setLocale($this->getParam('locale', ''));
         $this->setId($this->getParam('id'));
         $this->setTitle($this->getParam('title', ''));
         $this->setSortable($this->getParam('sortable', true));
@@ -124,6 +130,16 @@ abstract class Column
         {
             return $value;
         }
+    }
+
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    public function getLocale()
+    {
+        return $this->locale;
     }
 
     /**

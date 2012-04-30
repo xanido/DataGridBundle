@@ -16,6 +16,7 @@
         <parameter key="grid.column.boolean.class">Sorien\DataGridBundle\Grid\Column\BooleanColumn</parameter>
         <parameter key="grid.column.sourceselect.class">Sorien\DataGridBundle\Grid\Column\SourceSelectColumn</parameter>
         <parameter key="grid.column.array.class">Sorien\DataGridBundle\Grid\Column\ArrayColumn</parameter>
+        <parameter key="grid.column.money.class">Sorien\DataGridBundle\Grid\Column\MoneyColumn</parameter>
     </parameters>
 
     <services>
@@ -61,6 +62,10 @@
         </service>
 
         <service id="grid.column.array" class="%grid.column.array.class%" public="false">
+            <tag name="grid.column.extension" />
+        </service>
+
+        <service id="grid.column.money" class="%grid.column.money.class%" public="false">
             <tag name="grid.column.extension" />
         </service>
 

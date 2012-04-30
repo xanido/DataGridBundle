@@ -35,6 +35,11 @@ class Grid
     const REQUEST_QUERY_ORDER = '_order';
 
     /**
+     * @var string
+     */
+    private $locale;
+
+    /**
      * @var \Symfony\Component\HttpFoundation\Session;
      */
     private $session;
@@ -168,6 +173,11 @@ class Grid
         }
     }
 
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
     /**
      * Sets Source to the Grid
      *
@@ -194,8 +204,12 @@ class Grid
         //get cols from source
         $this->source->getColumns($this->columns);
 
-        //update populatable columns
+        //update columns
         foreach($this->columns as $column) {
+            if(!$column->getLocale()) {
+                $column->setLocale($this->locale);
+            }
+            //populate column if it implements the PopulatableColumnInterface
             if($column instanceof PopulatableColumnInterface) {
                 $column->populate($this->source);
             }
