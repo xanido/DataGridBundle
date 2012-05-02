@@ -87,4 +87,14 @@ class Row
         } 
         return array('id'=>$primaryField);
     }
+
+    public function getRouteParameters($action)
+    {
+        $routeParameters = array_merge(
+                array($this->getPrimaryField() => $this->getPrimaryFieldValue()),
+                $action->getRouteParameters()
+        );
+
+        return $routeParameters;
+    }
 }

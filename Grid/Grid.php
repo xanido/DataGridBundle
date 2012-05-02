@@ -99,6 +99,7 @@ class Grid
      */
     private $massActions;
     private $rowActions;
+    private $rowClickAction;
 
     /**
      * @var boolean
@@ -272,6 +273,8 @@ class Grid
 
         foreach ($this->columns as $column)
         {
+            
+
             $column->setData($this->getDataFromContext($column->getId()));
 
             if (($data = $column->getData()) !== null)
@@ -555,6 +558,29 @@ class Grid
     public function getRowActions()
     {
         return $this->rowActions;
+    }
+
+    /**
+     * Sets Row Click Action
+     *
+     * @param Action\RowActionInterface $action
+     * @return Grid
+     */
+    function setRowClickAction(RowActionInterface $action)
+    {
+        $this->rowClickAction = array($action->getColumn(), $action);
+
+        return $this;
+    }
+
+    /**
+     * Returns Row Click Action
+     *
+     * @return Action\RowAction[]
+     */
+    public function getRowClickAction()
+    {
+        return $this->rowClickAction;
     }
 
     /**

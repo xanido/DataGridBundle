@@ -64,7 +64,7 @@
 {% block grid_rows %}
     {% for row in grid.rows %}
     {% spaceless %}
-    <tr{% if row.color != '' %} style="background-color:{{row.color}};"{% endif %} class="grid-row-cells">
+    <tr{% if row.color != '' %} style="background-color:{{row.color}};"{% endif %} class="grid-row-cells" {% if grid.rowClickAction %} onclick="javascript: window.location.href='{{ url(grid.rowClickAction[1].route, row.routeParameters(grid.rowClickAction[1]), false) }}'" {% endif %}>
     {% for column in grid.columns %}
         {% if (column.visible )%}
             <td class="grid-column-{{ column.id }}{% if column.align != 'left'%} align-{{column.align}}{% endif %}">{{ grid_cell(column, row, grid)|raw }}</td>
